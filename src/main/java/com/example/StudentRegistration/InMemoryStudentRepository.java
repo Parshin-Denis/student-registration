@@ -2,29 +2,26 @@ package com.example.StudentRegistration;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
+import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-@ShellComponent
+@Repository
 @RequiredArgsConstructor
-public class StudentStorage {
+public class InMemoryStudentRepository {
     private int newStudentId = 1;
     private final List<Student> studentList;
     private final ApplicationEventPublisher publisher;
 
-    @ShellMethod(key = "a")
     public void addStudent(String firstName, String lastName, int age) {
         Student student = new Student(newStudentId++, firstName, lastName, age);
         studentList.add(student);
         publisher.publishEvent(new Event(this, student, OperationType.ADD));
     }
 
-    @ShellMethod(key = "r")
     public String removeStudent(int id) {
         Student student = studentList.stream()
                                      .filter(s -> s.getId() == id)
@@ -38,8 +35,7 @@ public class StudentStorage {
         return "Студент с таким ID не найден";
     }
 
-    @ShellMethod(key = "p")
-    public String printStudentList() {
+    public String getStudentList() {
         if (studentList.size() == 0) {
             return "Список студентов пуст";
         }
@@ -48,10 +44,8 @@ public class StudentStorage {
                                                               .toList());
     }
 
-    @ShellMethod(key = "c")
-    public String clearStudentList() {
+    public void clearStudentList() {
         studentList.clear();
-        return "Список студентов очищен";
     }
 
     public void init(String fileName){

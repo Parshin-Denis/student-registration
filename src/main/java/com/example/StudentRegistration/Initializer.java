@@ -11,13 +11,13 @@ import org.springframework.stereotype.Component;
 @ConditionalOnProperty("app.initializer.enabled")
 public class Initializer {
     @Autowired
-    private StudentStorage studentStorage;
+    private InMemoryStudentRepository repository;
 
     @Value("${app.initializer.filename}")
     private String fileName;
 
     @EventListener(ApplicationStartedEvent.class)
     public void init(){
-        studentStorage.init(fileName);
+        repository.init(fileName);
     }
 }
