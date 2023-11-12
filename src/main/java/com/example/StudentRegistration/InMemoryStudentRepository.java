@@ -14,25 +14,22 @@ import java.util.List;
 public class InMemoryStudentRepository {
     private int newStudentId = 1;
     private final List<Student> studentList;
-    private final ApplicationEventPublisher publisher;
 
-    public void addStudent(String firstName, String lastName, int age) {
+    public Student addStudent(String firstName, String lastName, int age) {
         Student student = new Student(newStudentId++, firstName, lastName, age);
         studentList.add(student);
-        publisher.publishEvent(new Event(this, student, OperationType.ADD));
+        return student;
     }
 
-    public String removeStudent(int id) {
+    public Student removeStudent(int id) {
         Student student = studentList.stream()
                                      .filter(s -> s.getId() == id)
                                      .findFirst()
                                      .orElse(null);
         if (student != null) {
             studentList.remove(student);
-            publisher.publishEvent(new Event(this, student, OperationType.REMOVE));
-            return null;
         }
-        return "Студент с таким ID не найден";
+        return student;
     }
 
     public String getStudentList() {
